@@ -25,6 +25,9 @@ int LM_R=44;
 int RM_F=45;
 int RM_R=46;
 int countstart=0;
+int EN_R=47;
+int EN_L=48;
+int circle=0;
 void setup() {
   // put your setup code here, to run once:
       pinMode(IR_1,INPUT);
@@ -49,6 +52,8 @@ void setup() {
       pinMode(LM_R,OUTPUT);
       pinMode(RM_F,OUTPUT);
       pinMode(RM_R,OUTPUT);
+      pinMode(EN_R,OUTPUT);
+      pinMode(EN_L,OUTPUT);
       Serial.begin(9600);
       
 }
@@ -86,29 +91,34 @@ void right()
 }
 void startlinefollower()
 {
+  if(countstart==1)
+  {
   right();
-  delay(80);
-  while(digitalRead(IR_7)==0)
+  delay(50);
+  countstart=2;
+  }
+  while(digitalRead((IR_7)==0)&&(countstart==2))
   {
     right();
   }
-  if(((digitalRead(IR_1))==0)&&((digitalRead(IR_2))==0)&&((digitalRead(IR_3))==1)&&((digitalRead(IR_5))==0)&&((digitalRead(IR_6))==0))
+  if(((digitalRead(IR_1))==0)&&((digitalRead(IR_2))==0)&&((digitalRead(IR_3))==1)&&((digitalRead(IR_5))==0)&&((digitalRead(IR_6))==0)&&(countstart==2))
      forward();
-  else if(((digitalRead(IR_1))==0)&&((digitalRead(IR_2))==0)&&((digitalRead(IR_4))==1)&&((digitalRead(IR_5))==0)&&((digitalRead(IR_6))==0))
+  else if(((digitalRead(IR_1))==0)&&((digitalRead(IR_2))==0)&&((digitalRead(IR_4))==1)&&((digitalRead(IR_5))==0)&&((digitalRead(IR_6))==0)&&(countstart==2))
      forward();
-  else if(digitalRead(IR_2)==1)
+  else if(digitalRead((IR_2)==1)&&(countstart==2))
       left();
-  else if(digitalRead(IR_5)==1)
+  else if(digitalRead((IR_5)==1)&&(countstart==2))
       right();         
 }
 void findpath()
 {
+
    if(((digitalRead(IR_6))==1)&&((digitalRead(IR_5))==1)&&((digitalRead(IR_4))==1)&&((digitalRead(IR_3))==1)&&((digitalRead(IR_2))==1)&&((digitalRead(IR_1))==1)&&(countstart==0))
       {
            forward();
            Serial.println("step1: forward");
       }
-   else if(((digitalRead(IR_1)==0)||(digitalRead(IR_2)==0))&&(digitalRead(IR_5)==0)&&(digitalRead(IR_6)==0))
+   else if(((digitalRead(IR_1)==0)||(digitalRead(IR_2)==0))&&(digitalRead(IR_5)==0)&&(digitalRead(IR_6)==0)&&(circle==0))
       {
           left();
           Serial.println("step2: left");
@@ -124,11 +134,18 @@ void findpath()
             Serial.println("step3: follow circle");    
        
        countstart=1;
+       circle=1;
        Serial.print("countstart=");
        Serial.println(countstart);
+         Serial.print("circle=");
+       Serial.println(circle);
        }  
+   
    }
-   else if((digitalRead(IR_1)==1)&&(digitalRead(IR_2)==1)&&(digitalRead(IR_5)==1)&&(digitalRead(IR_6)==1)&&(countstart==1))
+  
+  
+  
+  else if((digitalRead(IR_1)==1)&&(digitalRead(IR_2)==1)&&(digitalRead(IR_5)==1)&&(digitalRead(IR_6)==1)&&(countstart==1))
    {
        startlinefollower();
        Serial.println("finding line");
@@ -151,6 +168,8 @@ void loop() {
       digitalWrite(ground_6,LOW);
       digitalWrite(power_7,HIGH);
       digitalWrite(ground_7,LOW);
+      digitalWrite(EN_R,HIGH);
+      digitalWrite(EN_L,HIGH);
        findpath();
        
 }
