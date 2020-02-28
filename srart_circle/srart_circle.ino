@@ -58,6 +58,7 @@ void stope()
   digitalWrite(LM_R,LOW);
   digitalWrite(RM_F,LOW);
   digitalWrite(RM_R,LOW);
+  Serial.println("stop");
  }
 void forward()
 {
@@ -65,6 +66,7 @@ void forward()
   digitalWrite(RM_F,HIGH);
   digitalWrite(LM_R,LOW);
   digitalWrite(RM_R,LOW);
+  Serial.println("forward");
 }
 void left()
 {
@@ -72,6 +74,7 @@ void left()
   digitalWrite(LM_R,HIGH);
   digitalWrite(RM_F,HIGH);
   digitalWrite(RM_R,LOW);
+  Serial.println("left");
 }
 void right()
 {
@@ -79,6 +82,7 @@ void right()
   digitalWrite(LM_R,LOW);
   digitalWrite(RM_F,LOW);
   digitalWrite(RM_R,HIGH);
+  Serial.println("right");
 }
 void startlinefollower()
 {
@@ -99,13 +103,15 @@ void startlinefollower()
 }
 void findpath()
 {
-   if(((digitalRead(IR_6))==1)&&((digitalRead(IR_5))==1)&&((digitalRead(IR_4))==1)&&((digitalRead(IR_3))==1)&&((digitalRead(IR_2))==1)&&((digitalRead(IR_1))==1))
+   if(((digitalRead(IR_6))==1)&&((digitalRead(IR_5))==1)&&((digitalRead(IR_4))==1)&&((digitalRead(IR_3))==1)&&((digitalRead(IR_2))==1)&&((digitalRead(IR_1))==1)&&(countstart==0))
       {
            forward();
+           Serial.println("step1: forward");
       }
    else if(((digitalRead(IR_1)==0)||(digitalRead(IR_2)==0))&&(digitalRead(IR_5)==0)&&(digitalRead(IR_6)==0))
       {
           left();
+          Serial.println("step2: left");
       }
    else if((digitalRead(IR_1)==1)&&(digitalRead(IR_2)==1)&&(digitalRead(IR_5)==0)&&(digitalRead(IR_6)==0))
    {
@@ -115,12 +121,17 @@ void findpath()
                 forward();
             else if(digitalRead(IR_3)==0)
                 left();
-       }
+            Serial.println("step3: follow circle");    
+       
        countstart=1;
+       Serial.print("countstart=");
+       Serial.println(countstart);
+       }  
    }
    else if((digitalRead(IR_1)==1)&&(digitalRead(IR_2)==1)&&(digitalRead(IR_5)==1)&&(digitalRead(IR_6)==1)&&(countstart==1))
    {
        startlinefollower();
+       Serial.println("finding line");
    }
 }
 void loop() {
@@ -141,4 +152,5 @@ void loop() {
       digitalWrite(power_7,HIGH);
       digitalWrite(ground_7,LOW);
        findpath();
+       
 }
